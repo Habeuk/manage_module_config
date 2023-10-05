@@ -1,0 +1,7 @@
+name: manage module config
+type: module
+description: permet de gerer la configuration des modules, permet d&#039;attribuer un module à un site web ou pas
+package: Custom
+core_version_requirement: ^9 || ^10
+dependencies:
+  - lesroidelareno

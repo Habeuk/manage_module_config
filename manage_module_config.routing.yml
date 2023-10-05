@@ -1,0 +1,15 @@
+manage_module_config.example:
+  path: '/manage-module-config/example'
+  defaults:
+    _title: 'Example'
+    _controller: '\Drupal\manage_module_config\Controller\ManageModuleConfigController::build'
+  requirements:
+    _permission: 'access content'
+
+manage_module_config.settings_form:
+  path: '/admin/config/system/manage-module-config'
+  defaults:
+    _title: 'manage module config settings'
+    _form: 'Drupal\manage_module_config\Form\SettingsForm'
+  requirements:
+    _permission: 'administer manage_module_config configuration'

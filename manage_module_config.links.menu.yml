@@ -1,0 +1,6 @@
+manage_module_config.settings_form:
+  title: 'manage module config'
+  description: 'Configure manage module config.'
+  parent: system.admin_config_system
+  route_name: manage_module_config.settings_form
+  weight: 10

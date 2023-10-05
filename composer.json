@@ -1,0 +1,14 @@
+{
+    "name": "habeuk/manage_module_config",
+    "description": "Permet de gerer les configurations de modules",
+    "type": "drupal-custom-module",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "kouwa stephane",
+            "email": "kksasteph888@gmail.com"
+        }
+    ],
+    "minimum-stability": "dev",
+    "require": {}
+}
