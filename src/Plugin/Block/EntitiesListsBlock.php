@@ -63,9 +63,22 @@ class EntitiesListsBlock extends BlockBase implements ContainerFactoryPluginInte
   }
   
   /**
-   * Charge toue le configurationa active
+   *
+   * @param array $configs
    */
-  protected function loadAllentities(&$configs) {
+  protected function LoadAllEntities(array &$configs) {
+    /**
+     *
+     * @var \Drupal\manage_module_config\Plugin\ManageEntitiesPluginManager $manage_module_entities
+     */
+    $manage_module_entities = \Drupal::service('plugin.manager.manage_entities');
+    $manage_module_entities->buildResumes();
+  }
+  
+  /**
+   * Charge toute le configurationa active
+   */
+  protected function loadAllentitiesOld(&$configs) {
     $domainAccessField = \Drupal\domain_access\DomainAccessManagerInterface::DOMAIN_ACCESS_FIELD;
     $entities_type = [
       'blocks_contents',

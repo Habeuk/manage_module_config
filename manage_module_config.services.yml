@@ -2,3 +2,7 @@ services:
   plugin.manager.manage_module_config:
     class: Drupal\manage_module_config\ManageModuleConfigPluginManager
     parent: default_plugin_manager
+    
+  plugin.manager.manage_entities:
+    class: Drupal\manage_module_config\ManageEntities\ManageModuleEntitiesPluginManager
+    parent: default_plugin_manager
