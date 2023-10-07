@@ -29,4 +29,49 @@ class ManageEntittiesPluginManager extends DefaultPluginManager {
     $this->setCacheBackend($cache_backend, 'manage_entitties_plugins');
   }
   
+  /**
+   * Permet d'afficher les resumes des differents plugins.
+   */
+  public function buildResumes() {
+    $configs = [
+      '#type' => 'html_tag',
+      '#tag' => 'div',
+      '#attributes' => [
+        'class' => [
+          'row',
+          'row-marg-2px'
+        ]
+      ]
+    ];
+    $plugins = $this->getDefinitions();
+    dump($plugins);
+    foreach ($plugins as $plugin) {
+      /**
+       *
+       * @var \Drupal\manage_module_config\ManageEntitties\ManageEntittiesPluginBase $instance
+       */
+      $instance = $this->createInstance($plugin['id'], []);
+      $configuration = $instance->defaultConfiguration();
+      $instance->setConfiguration($configuration);
+      $url = $instance->getRoute();
+      if ($url) {
+        $url = $url->toString();
+      }
+      else
+        $url = NULL;
+      if ($instance->getConfiguration()['enable']) {
+        $instance->getNumbers();
+        $configs[] = [
+          '#theme' => 'manage_module_config_card_info',
+          '#name' => $instance->GetName(),
+          '#description' => $instance->getDescription(),
+          '#icon_svg' => $instance->getIconSvg(),
+          '#icon_svg_class' => 'btn-circle ' . $instance->getIconSvgClass(),
+          '#route' => $url
+        ];
+      }
+    }
+    return $configs;
+  }
+  
 }
