@@ -3,5 +3,5 @@ services:
     class: Drupal\manage_module_config\ManageModuleConfigPluginManager
     parent: default_plugin_manager
   plugin.manager.manage_entitties:
-    class: Drupal\manage_module_config\ManageEntittiesPluginManager
+    class: Drupal\manage_module_config\ManageEntitties\ManageEntittiesPluginManager
     parent: default_plugin_manager

@@ -2,7 +2,7 @@
 
 namespace Drupal\manage_module_config\Plugin\ManageEntitties;
 
-use Drupal\manage_module_config\ManageEntittiesPluginBase;
+use Drupal\manage_module_config\ManageEntitties\ManageEntittiesPluginBase;
 
 /**
  * Plugin implementation of the manage_entitties.
@@ -14,5 +14,5 @@ use Drupal\manage_module_config\ManageEntittiesPluginBase;
  * )
  */
 class Foo extends ManageEntittiesPluginBase {
-
+  
 }
