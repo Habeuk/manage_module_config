@@ -114,17 +114,11 @@ class ManageModuleBlockContent extends ManageEntittiesPluginBase {
    * @see \Drupal\manage_module_config\ManageEntitties\ManageEntittiesInterface::getBaseRoute()
    */
   public function getBaseRoute() {
-    /**
-     *
-     * @var \Drupal\Core\Http\RequestStack $RequestStack
-     */
-    $RequestStack = \Drupal::service('request_stack');
-    $Request = $RequestStack->getCurrentRequest();
     return Url::fromRoute('manage_module_config.manage_entities', [
       'plugin_id' => $this->pluginId
     ], [
       'query' => [
-        'destination' => $Request->getPathInfo()
+        'destination' => $this->getPathInfo()
       ]
     ]);
   }

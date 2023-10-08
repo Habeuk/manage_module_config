@@ -17,6 +17,12 @@ abstract class ManageEntittiesPluginBase extends PluginBase implements ManageEnt
   
   /**
    *
+   * @var string
+   */
+  protected $getPathInfo = NULL;
+  
+  /**
+   *
    * {@inheritdoc}
    */
   public function label() {
@@ -120,8 +126,26 @@ abstract class ManageEntittiesPluginBase extends PluginBase implements ManageEnt
    */
   protected function ensureDestination(Url $url) {
     return $url->mergeOptions([
-      'query' => $this->getRedirectDestination()->getAsArray()
+      'query' => [
+        'destination' => $this->getPathInfo()
+      ]
     ]);
+  }
+  
+  /**
+   * --
+   */
+  protected function getPathInfo() {
+    if (!$this->getPathInfo) {
+      /**
+       *
+       * @var \Drupal\Core\Http\RequestStack $RequestStack
+       */
+      $RequestStack = \Drupal::service('request_stack');
+      $Request = $RequestStack->getCurrentRequest();
+      $this->getPathInfo = $Request->getPathInfo();
+    }
+    return $this->getPathInfo;
   }
   
 }

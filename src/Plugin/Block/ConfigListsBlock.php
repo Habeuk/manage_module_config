@@ -3,6 +3,7 @@
 namespace Drupal\manage_module_config\Plugin\Block;
 
 use Drupal\Core\Block\BlockBase;
+use Drupal\lesroidelareno\lesroidelareno;
 
 /**
  * Liste les configuration accessible.
@@ -21,11 +22,12 @@ class ConfigListsBlock extends BlockBase {
    */
   public function build() {
     $build = [];
-    $build['content']['container'] = [
-      '#theme' => 'manage_module_config_card',
-      '#header' => "Configurations",
-      '#content' => $this->loadAllActiveConfigs()
-    ];
+    if (lesroidelareno::userIsAdministratorSite())
+      $build['content']['container'] = [
+        '#theme' => 'manage_module_config_card',
+        '#header' => "Configurations",
+        '#content' => $this->loadAllActiveConfigs()
+      ];
     return $build;
   }
   
