@@ -75,10 +75,15 @@ class ManageModuleEntities extends ManageEntittiesPluginBase {
               '#value' => $entityType->label()
             ];
             // add new content
+            if ($entity_type_id == 'node') {
+              $route = 'node.add';
+            }
+            else
+              $route = 'entity.' . $entity_type_id . '.add_form';
             $build['add_new'] = [
               '#type' => 'link',
               '#title' => ' + Ajouter',
-              '#url' => Url::fromRoute('entity.' . $entity_type_id . '.add_form', [
+              '#url' => Url::fromRoute($route, [
                 $entity_bundle_id => $entityType->id()
               ])
             ];
