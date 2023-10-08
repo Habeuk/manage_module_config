@@ -57,7 +57,7 @@ class EntitiesListsBlock extends BlockBase implements ContainerFactoryPluginInte
     ];
     // $this->loadAllProducts($configs);
     $this->loadAllentities($configs);
-    $this->loadAllBlocks($configs);
+    // $this->loadAllBlocks($configs);
     $build['content']['container'] = $configs;
     return $build;
   }
