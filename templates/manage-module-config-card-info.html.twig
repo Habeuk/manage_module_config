@@ -1,12 +1,12 @@
 <div class="col-md-6 col-lg-4 mb-2">
-	<div class="card h-100 justify-content-center">
-		<a class="p-lg-3 p-2 d-block text-decoration-none" {% if route %} href="{{ route }}" {% endif %}>
+	<div class="card card-info h-100 justify-content-center">
+		<a class="block-link d-block text-decoration-none" {% if route %} href="{{ route }}" {% endif %}>
 			<div class="d-flex align-items-center">
-				<span class="btn {{ icon_svg_class }}">
+				<span class=" icone btn {{ icon_svg_class }}">
 					{{ icon_svg|raw }}
 				</span>
 				<div class="ml-3">
-					<h4 class="fw-normal">{{ name }}</h4>
+					<h5 class="font-weight-bold titre">{{ name }}</h5>
 					<div>{{ description|raw }}</div>
 					<div class="progress d-none">
 						<div class="progress-bar bg-danger" role="progressbar"

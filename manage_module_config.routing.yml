@@ -16,9 +16,17 @@ manage_module_config.settings_form:
     
     
 manage_module_config.manage_entities:
-  path: '/user/{uid}/manage-module-config/{plugin_id}'
+  path: '/admin/config/manage-module-config/{plugin_id}'
   defaults:
-    _title: 'Example'
+    _title: 'Gestion des contenus'
     _controller: '\Drupal\manage_module_config\Controller\ManageModuleConfigController::ManageEntities'
+  requirements:
+    _role: 'gerant_de_site_web+administrator'
+    
+manage_module_config.add_config:
+  path: '/admin/config/manage-add-plugins/{domain_id}/{site_type_datas_id}'
+  defaults:
+    _title: 'Add plugin'
+    _controller: '\Drupal\manage_module_config\Controller\ManageModuleConfigController::AddPlugin'
   requirements:
     _role: 'gerant_de_site_web+administrator'

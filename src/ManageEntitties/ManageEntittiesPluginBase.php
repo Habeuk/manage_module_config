@@ -3,11 +3,17 @@
 namespace Drupal\manage_module_config\ManageEntitties;
 
 use Drupal\Component\Plugin\PluginBase;
+use Drupal\Core\Entity\ContentEntityInterface;
+use Drupal\Core\Url;
+use Drupal\Core\StringTranslation\StringTranslationTrait;
+use Drupal\Core\Routing\RedirectDestinationTrait;
 
 /**
  * Base class for manage_entitties plugins.
  */
 abstract class ManageEntittiesPluginBase extends PluginBase implements ManageEntittiesInterface {
+  use StringTranslationTrait;
+  use RedirectDestinationTrait;
   
   /**
    *
@@ -60,6 +66,62 @@ abstract class ManageEntittiesPluginBase extends PluginBase implements ManageEnt
    */
   public function setConfiguration(array $configuration) {
     $this->configuration = $configuration;
+  }
+  
+  /**
+   * Builds a renderable list of operation links for the entity.
+   *
+   * @param \Drupal\Core\Entity\EntityInterface $entity
+   *        The entity on which the linked operations will be performed.
+   *        
+   * @return array A renderable array of operation links.
+   *        
+   * @see \Drupal\Core\Entity\EntityListBuilder::buildRow()
+   */
+  public function buildOperations(ContentEntityInterface $entity) {
+    $build = [
+      '#type' => 'operations',
+      '#links' => $this->getOperations($entity)
+    ];
+    
+    return $build;
+  }
+  
+  /**
+   *
+   * {@inheritdoc}
+   */
+  public function getOperations(ContentEntityInterface $entity) {
+    $operations = [];
+    if ($entity->access('update') && $entity->hasLinkTemplate('edit-form')) {
+      $operations['edit'] = [
+        'title' => $this->t('Edit'),
+        'weight' => 10,
+        'url' => $this->ensureDestination($entity->toUrl('edit-form'))
+      ];
+    }
+    if ($entity->access('delete') && $entity->hasLinkTemplate('delete-form')) {
+      $operations['delete'] = [
+        'title' => $this->t('Delete'),
+        'weight' => 100,
+        'url' => $this->ensureDestination($entity->toUrl('delete-form'))
+      ];
+    }
+    return $operations;
+  }
+  
+  /**
+   * Ensures that a destination is present on the given URL.
+   *
+   * @param \Drupal\Core\Url $url
+   *        The URL object to which the destination should be added.
+   *        
+   * @return \Drupal\Core\Url The updated URL object.
+   */
+  protected function ensureDestination(Url $url) {
+    return $url->mergeOptions([
+      'query' => $this->getRedirectDestination()->getAsArray()
+    ]);
   }
   
 }

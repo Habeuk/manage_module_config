@@ -30,6 +30,28 @@ class ManageModuleConfigPluginManager extends DefaultPluginManager {
   }
   
   /**
+   * --
+   */
+  public function getOptionsPlugins() {
+    $plugins = $this->getDefinitions();
+    $options = [];
+    foreach ($plugins as $plugin) {
+      
+      /**
+       *
+       * @var \Drupal\manage_module_config\ManageModuleConfigPluginBase $instance
+       */
+      $instance = $this->createInstance($plugin['id'], []);
+      $configuration = $instance->defaultConfiguration();
+      $instance->setConfiguration($configuration);
+      if (!$instance->IsEnabled()) {
+        $options[$plugin['id']] = $instance->label();
+      }
+    }
+    return $options;
+  }
+  
+  /**
    * Permet de recuperer la liste des configurables accessible par le domaine
    * encours.
    */

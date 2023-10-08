@@ -30,21 +30,36 @@ class ManageEntittiesPluginManager extends DefaultPluginManager {
   }
   
   /**
+   * --
+   */
+  public function BuildCollectionOfEnttities(string $plugin_id, array &$datas) {
+    /**
+     *
+     * @var \Drupal\manage_module_config\Plugin\ManageEntitties\ManageModuleEntities $instance
+     */
+    $instance = $this->createInstance($plugin_id);
+    $configuration = $instance->defaultConfiguration();
+    $instance->setConfiguration($configuration);
+    return $instance->buildCollections($datas);
+  }
+  
+  /**
+   * --
+   */
+  public function getOptionsPlugins() {
+    $plugins = $this->getDefinitions();
+    $options = [];
+    foreach ($plugins as $plugin) {
+      $options[$plugin['id']] = $plugin['label'];
+    }
+    return $options;
+  }
+  
+  /**
    * Permet d'afficher les resumes des differents plugins.
    */
-  public function buildResumes() {
-    $configs = [
-      '#type' => 'html_tag',
-      '#tag' => 'div',
-      '#attributes' => [
-        'class' => [
-          'row',
-          'row-marg-2px'
-        ]
-      ]
-    ];
+  public function buildResumes(array &$configs) {
     $plugins = $this->getDefinitions();
-    dump($plugins);
     foreach ($plugins as $plugin) {
       /**
        *
@@ -53,22 +68,24 @@ class ManageEntittiesPluginManager extends DefaultPluginManager {
       $instance = $this->createInstance($plugin['id'], []);
       $configuration = $instance->defaultConfiguration();
       $instance->setConfiguration($configuration);
-      $url = $instance->getRoute();
+      $url = $instance->getBaseRoute();
       if ($url) {
         $url = $url->toString();
       }
       else
         $url = NULL;
       if ($instance->getConfiguration()['enable']) {
-        $instance->getNumbers();
-        $configs[] = [
-          '#theme' => 'manage_module_config_card_info',
-          '#name' => $instance->GetName(),
-          '#description' => $instance->getDescription(),
-          '#icon_svg' => $instance->getIconSvg(),
-          '#icon_svg_class' => 'btn-circle ' . $instance->getIconSvgClass(),
-          '#route' => $url
-        ];
+        $number = $instance->getNumbers();
+        if (!empty($number))
+          $configs[] = [
+            '#theme' => 'manage_module_config_card_info',
+            '#name' => $instance->GetName(),
+            '#description' => $instance->getDescription(),
+            '#icon_svg' => $instance->getIconSvg(),
+            '#icon_svg_class' => 'btn-circle ' . $instance->getIconSvgClass(),
+            '#route' => $url,
+            '#number' => $number
+          ];
       }
     }
     return $configs;

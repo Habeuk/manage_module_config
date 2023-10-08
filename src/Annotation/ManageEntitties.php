@@ -10,14 +10,14 @@ use Drupal\Component\Annotation\Plugin;
  * @Annotation
  */
 class ManageEntitties extends Plugin {
-
+  
   /**
    * The plugin ID.
    *
    * @var string
    */
   public $id;
-
+  
   /**
    * The human-readable name of the plugin.
    *
@@ -26,7 +26,7 @@ class ManageEntitties extends Plugin {
    * @ingroup plugin_translatable
    */
   public $title;
-
+  
   /**
    * The description of the plugin.
    *
@@ -35,5 +35,30 @@ class ManageEntitties extends Plugin {
    * @ingroup plugin_translatable
    */
   public $description;
-
+  
+  /**
+   * Liste des entitées.
+   *
+   * @var array
+   */
+  public $entities = [];
+  
+  /**
+   * --
+   *
+   * @return array
+   */
+  public function getEntities() {
+    return $this->entities;
+  }
+  
+  /**
+   * --
+   *
+   * @param array $entities
+   */
+  public function setEntities(array $entities) {
+    $this->entities = $entities;
+  }
+  
 }

@@ -44,4 +44,9 @@ interface ManageEntittiesInterface {
    */
   public function getNumbers();
   
+  /**
+   * Permet de construire les collections des entitées ainsi presente.
+   */
+  public function buildCollections(array &$datas);
+  
 }

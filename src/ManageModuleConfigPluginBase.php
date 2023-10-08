@@ -37,6 +37,13 @@ abstract class ManageModuleConfigPluginBase extends PluginBase implements Manage
     ];
   }
   
+  /**
+   * --
+   */
+  public function IsEnabled() {
+    return $this->configuration['enable'] ? TRUE : FALSE;
+  }
+  
   public function getIconSvg() {
     return $this->configuration['icon_svg'];
   }
