@@ -4,11 +4,35 @@ namespace Drupal\manage_module_config\Controller;
 
 use Drupal\Core\Controller\ControllerBase;
 use Stephane888\DrupalUtility\HttpResponse;
+use Symfony\Component\DependencyInjection\ContainerInterface;
+use Drupal\manage_module_config\ManageEntitties\ManageEntittiesPluginManager;
 
 /**
  * Returns responses for manage module config routes.
  */
 class ManageModuleConfigController extends ControllerBase {
+  
+  /**
+   *
+   * @var ManageEntittiesPluginManager
+   */
+  protected $ManageEntittiesPluginManager;
+  
+  /**
+   *
+   * @param ManageEntittiesPluginManager $ManageEntittiesPluginManager
+   */
+  function __construct(ManageEntittiesPluginManager $ManageEntittiesPluginManager) {
+    $this->ManageEntittiesPluginManager = $ManageEntittiesPluginManager;
+  }
+  
+  /**
+   *
+   * {@inheritdoc}
+   */
+  public static function create(ContainerInterface $container) {
+    return new static($container->get('plugin.manager.manage_entitties'));
+  }
   
   /**
    * Builds the response.
@@ -29,13 +53,18 @@ class ManageModuleConfigController extends ControllerBase {
    */
   public function ManageEntities($plugin_id) {
     $datas = [];
-    /**
-     *
-     * @var \Drupal\manage_module_config\ManageEntitties\ManageEntittiesPluginManager $manage_module_entities
-     */
-    $manage_module_entities = \Drupal::service('plugin.manager.manage_entitties');
-    $manage_module_entities->BuildCollectionOfEnttities($plugin_id, $datas);
+    $this->ManageEntittiesPluginManager->BuildCollectionsOfEnttities($plugin_id, $datas);
     return $datas;
+  }
+  
+  /**
+   * permet de charger la configuration avancé
+   *
+   * @param string $plugin_id
+   * @param string $entity_type_id
+   */
+  public function AdvanceManageEntities($plugin_id, $entity_type_id) {
+    //
   }
   
   /**

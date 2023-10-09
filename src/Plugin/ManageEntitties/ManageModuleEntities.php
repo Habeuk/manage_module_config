@@ -33,6 +33,20 @@ class ManageModuleEntities extends ManageEntittiesPluginBase {
   }
   
   /**
+   * Permet de construire un rendu advancé avec des recherches et des filtres.
+   * Si possible avec une option en ajax. (plus tard).
+   *
+   * @param string $entity_type_id
+   * @param array $datas
+   */
+  public function buildadvanceCollection(string $entity_type_id, array &$datas) {
+    $definitions = $this->getPluginDefinition();
+    if ($definitions['entities'] && in_array($entity_type_id, $definitions['entities'])) {
+      //
+    }
+  }
+  
+  /**
    *
    * {@inheritdoc}
    * @see \Drupal\manage_module_config\ManageEntitties\ManageEntittiesInterface::buildCollections()

@@ -20,6 +20,11 @@ abstract class ManageEntittiesPluginBase extends PluginBase implements ManageEnt
    * @var string
    */
   protected $getPathInfo = NULL;
+  /**
+   *
+   * @var \Symfony\Component\HttpFoundation\Request
+   */
+  protected $request = NULL;
   
   /**
    *
@@ -137,15 +142,25 @@ abstract class ManageEntittiesPluginBase extends PluginBase implements ManageEnt
    */
   protected function getPathInfo() {
     if (!$this->getPathInfo) {
+      $this->getPathInfo = $this->getRequest()->getPathInfo();
+    }
+    return $this->getPathInfo;
+  }
+  
+  /**
+   *
+   * @return \Symfony\Component\HttpFoundation\Request
+   */
+  protected function getRequest() {
+    if (!$this->request) {
       /**
        *
        * @var \Drupal\Core\Http\RequestStack $RequestStack
        */
       $RequestStack = \Drupal::service('request_stack');
-      $Request = $RequestStack->getCurrentRequest();
-      $this->getPathInfo = $Request->getPathInfo();
+      $this->request = $RequestStack->getCurrentRequest();
     }
-    return $this->getPathInfo;
+    return $this->request;
   }
   
 }

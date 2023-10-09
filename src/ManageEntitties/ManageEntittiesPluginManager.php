@@ -30,9 +30,24 @@ class ManageEntittiesPluginManager extends DefaultPluginManager {
   }
   
   /**
-   * --
+   * Permet de construire un affichage avancé.
+   *
+   * @param string $plugin_id
+   * @param string $entity_type_id
+   * @param array $datas
    */
-  public function BuildCollectionOfEnttities(string $plugin_id, array &$datas) {
+  public function BuildAdvanceCollectionOfEnttities(string $plugin_id, string $entity_type_id, array &$datas) {
+    /**
+     *
+     * @var \Drupal\manage_module_config\Plugin\ManageEntitties\ManageModuleEntities $instance
+     */
+    $instance = $this->createInstance($plugin_id);
+  }
+  
+  /**
+   * Construit les collections pour toutes les entites.
+   */
+  public function BuildCollectionsOfEnttities(string $plugin_id, array &$datas) {
     /**
      *
      * @var \Drupal\manage_module_config\Plugin\ManageEntitties\ManageModuleEntities $instance
