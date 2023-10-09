@@ -5,6 +5,7 @@ namespace Drupal\manage_module_config;
 use Drupal\Core\Cache\CacheBackendInterface;
 use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\Core\Plugin\DefaultPluginManager;
+use Stephane888\Debug\Repositories\ConfigDrupal;
 
 /**
  * ManageModuleConfig plugin manager.
@@ -36,7 +37,6 @@ class ManageModuleConfigPluginManager extends DefaultPluginManager {
     $plugins = $this->getDefinitions();
     $options = [];
     foreach ($plugins as $plugin) {
-      
       /**
        *
        * @var \Drupal\manage_module_config\ManageModuleConfigPluginBase $instance
@@ -56,6 +56,11 @@ class ManageModuleConfigPluginManager extends DefaultPluginManager {
    * encours.
    */
   public function getActiveConfigs() {
+    $configs = ConfigDrupal::config('manage_module_config.settings');
+    $activePlugins = [];
+    if (!empty($configs['plugins'])) {
+      $activePlugins = $configs['plugins'];
+    }
     $configs = [
       '#type' => 'html_tag',
       '#tag' => 'div',
@@ -81,7 +86,17 @@ class ManageModuleConfigPluginManager extends DefaultPluginManager {
       }
       else
         $url = NULL;
-      if ($instance->getConfiguration()['enable']) {
+      if ($instance->IsEnabled()) {
+        $configs[] = [
+          '#theme' => 'manage_module_config_card_info',
+          '#name' => $instance->GetName(),
+          '#description' => $instance->getDescription(),
+          '#icon_svg' => $instance->getIconSvg(),
+          '#icon_svg_class' => 'btn-circle ' . $instance->getIconSvgClass(),
+          '#route' => $url
+        ];
+      }
+      elseif ($activePlugins && !empty($activePlugins[$plugin['id']])) {
         $configs[] = [
           '#theme' => 'manage_module_config_card_info',
           '#name' => $instance->GetName(),

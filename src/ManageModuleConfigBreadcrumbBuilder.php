@@ -28,7 +28,7 @@ class ManageModuleConfigBreadcrumbBuilder implements BreadcrumbBuilderInterface 
       "entity.config_theme_entity.edit_form"
     ];
     $routeName = $route_match->getRouteName();
-    if (in_array($routeName, $routes)) {
+    if (in_array($routeName, $routes) || str_contains($routeName, 'bookingsystem')) {
       return true;
     }
     return false;
