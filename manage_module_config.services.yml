@@ -5,3 +5,8 @@ services:
   plugin.manager.manage_entitties:
     class: Drupal\manage_module_config\ManageEntitties\ManageEntittiesPluginManager
     parent: default_plugin_manager
+
+  manage_module_config.breadcrumb:
+    class: Drupal\manage_module_config\ManageModuleConfigBreadcrumbBuilder
+    tags:
+      - { name: breadcrumb_builder, priority: 1000 }
