@@ -36,12 +36,15 @@ class ManageEntittiesPluginManager extends DefaultPluginManager {
    * @param string $entity_type_id
    * @param array $datas
    */
-  public function BuildAdvanceCollectionOfEnttities(string $plugin_id, string $entity_type_id, array &$datas) {
+  public function BuildAdvanceCollectionOfEnttities(string $plugin_id, string $entity_type_id, $bundle, array &$datas) {
     /**
      *
      * @var \Drupal\manage_module_config\Plugin\ManageEntitties\ManageModuleEntities $instance
      */
     $instance = $this->createInstance($plugin_id);
+    $configuration = $instance->defaultConfiguration();
+    $instance->setConfiguration($configuration);
+    $instance->buildadvanceCollection($entity_type_id, $bundle, $datas);
   }
   
   /**

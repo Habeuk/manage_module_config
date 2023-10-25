@@ -58,13 +58,15 @@ class ManageModuleConfigController extends ControllerBase {
   }
   
   /**
-   * permet de charger la configuration avancé
+   * Permet de charger la configuration avancée
    *
    * @param string $plugin_id
    * @param string $entity_type_id
    */
-  public function AdvanceManageEntities($plugin_id, $entity_type_id) {
-    //
+  public function AdvanceManageEntities($plugin_id, $entity_type, $bundle) {
+    $datas = [];
+    $this->ManageEntittiesPluginManager->BuildAdvanceCollectionOfEnttities($plugin_id, $entity_type, $bundle, $datas);
+    return $datas;
   }
   
   /**

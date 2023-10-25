@@ -39,10 +39,81 @@ class ManageModuleEntities extends ManageEntittiesPluginBase {
    * @param string $entity_type_id
    * @param array $datas
    */
-  public function buildadvanceCollection(string $entity_type_id, array &$datas) {
+  public function buildadvanceCollection(string $entity_type_id, $bundle, array &$datas) {
     $definitions = $this->getPluginDefinition();
+    $domainAccessField = \Drupal\domain_access\DomainAccessManagerInterface::DOMAIN_ACCESS_FIELD;
     if ($definitions['entities'] && in_array($entity_type_id, $definitions['entities'])) {
-      //
+      $query = \Drupal::entityTypeManager()->getStorage($entity_type_id)->getQuery();
+      $query->accessCheck(TRUE);
+      $query->condition($domainAccessField, lesroidelareno::getCurrentDomainId());
+      $query->condition('type', $bundle);
+      $query->sort('created', 'DESC');
+      $query->pager(10);
+      $ids = $query->execute();
+      if ($ids) {
+        /**
+         * Build form search
+         */
+        $form = \Drupal::formBuilder()->getForm('Drupal\manage_module_config\Form\EntitiesFilter');
+        $datas[] = $form;
+        
+        /**
+         *
+         * @var DateFormatter $formatterDate
+         */
+        $formatterDate = \Drupal::service("date.formatter");
+        $header = [
+          'id' => '#id',
+          'name' => 'Titre',
+          'user' => 'Auteur',
+          'created' => 'Date creation',
+          'operations' => 'operations'
+        ];
+        $rows = [];
+        $entities = \Drupal::entityTypeManager()->getStorage($entity_type_id)->loadMultiple($ids);
+        // dump($entities);
+        foreach ($entities as $entity) {
+          /**
+           *
+           * @var \Drupal\blockscontent\Entity\BlocksContents $entity
+           */
+          $id = $entity->id();
+          $rows[$id] = [
+            'id' => $id,
+            'name' => $entity->hasLinkTemplate('canonical') ? [
+              'data' => [
+                '#type' => 'link',
+                '#title' => $entity->label(),
+                '#weight' => 10,
+                '#url' => $entity->toUrl('canonical')
+              ]
+            ] : $entity->label(),
+            'user' => $entity->getOwner()->getDisplayName(),
+            'created' => $formatterDate->format($entity->getCreatedTime()),
+            'operations' => [
+              'data' => $this->buildOperations($entity)
+            ]
+          ];
+        }
+        if ($rows) {
+          $build['table'] = [
+            '#type' => 'table',
+            '#header' => $header,
+            '#title' => 'Titre de la table',
+            '#rows' => $rows,
+            '#empty' => 'Aucun contenu',
+            '#attributes' => [
+              'class' => [
+                'page-content00'
+              ]
+            ]
+          ];
+          $build['pager'] = [
+            '#type' => 'pager'
+          ];
+          $datas[] = $build;
+        }
+      }
     }
   }
   
@@ -52,113 +123,149 @@ class ManageModuleEntities extends ManageEntittiesPluginBase {
    * @see \Drupal\manage_module_config\ManageEntitties\ManageEntittiesInterface::buildCollections()
    */
   public function buildCollections(array &$datas) {
-    $domainAccessField = \Drupal\domain_access\DomainAccessManagerInterface::DOMAIN_ACCESS_FIELD;
     $definitions = $this->getPluginDefinition();
+    
+    if ($definitions['entities']) {
+      foreach ($definitions['entities'] as $entity_type_id) {
+        $this->getEntities($entity_type_id, $datas);
+      }
+    }
+  }
+  
+  protected function getEntities($entity_type_id, &$datas) {
+    $domainAccessField = \Drupal\domain_access\DomainAccessManagerInterface::DOMAIN_ACCESS_FIELD;
+    $entity = \Drupal::entityTypeManager()->getStorage($entity_type_id);
+    $entity_bundle_id = $entity->getEntityType()->getBundleEntityType();
+    $entitiesType = \Drupal::entityTypeManager()->getStorage($entity_bundle_id)->loadMultiple();
+    foreach ($entitiesType as $entityType) {
+      $query = \Drupal::entityTypeManager()->getStorage($entity_type_id)->getQuery();
+      $query->condition($domainAccessField, lesroidelareno::getCurrentDomainId());
+      $query->condition('type', $entityType->id());
+      $query->accessCheck(TRUE);
+      $query->sort('created', 'DESC');
+      $query->pager(10);
+      $ids = $query->execute();
+      if ($ids) {
+        $this->buildEntitiesTypeTables($ids, $entityType, $entity_type_id, $entity_bundle_id, $datas);
+      }
+    }
+  }
+  
+  /**
+   * --
+   */
+  protected function buildEntitiesTypeTables(array $ids, $entityType, $entity_type_id, $entity_bundle_id, array &$datas) {
     /**
      *
      * @var DateFormatter $formatterDate
      */
     $formatterDate = \Drupal::service("date.formatter");
-    if ($definitions['entities']) {
-      foreach ($definitions['entities'] as $entity_type_id) {
-        $entity = \Drupal::entityTypeManager()->getStorage($entity_type_id);
-        $entity_bundle_id = $entity->getEntityType()->getBundleEntityType();
-        $entitiesType = \Drupal::entityTypeManager()->getStorage($entity_bundle_id)->loadMultiple();
-        /**
-         * On utilise list builder, en se basant sur les fonctions specifique
-         * qu'on a ajouté.
-         *
-         * @var \Drupal\Core\Entity\EntityListBuilderInterface $ListBuilder
-         */
-        // $ListBuilder =
-        // \Drupal::entityTypeManager()->getListBuilder($entity_type_id);
-        // // apply custom filter
-        // $datas[] = $ListBuilder->render();
-        foreach ($entitiesType as $entityType) {
-          $query = \Drupal::entityTypeManager()->getStorage($entity_type_id)->getQuery();
-          $query->condition($domainAccessField, lesroidelareno::getCurrentDomainId());
-          $query->condition('type', $entityType->id());
-          $query->accessCheck(TRUE);
-          $query->sort('created', 'DESC');
-          $query->pager(10);
-          $ids = $query->execute();
-          if ($ids) {
-            $build['header'] = [
-              '#type' => 'html_tag',
-              '#tag' => 'h2',
-              '#value' => $entityType->label()
-            ];
-            // add new content
-            if ($entity_type_id == 'node') {
-              $route = 'node.add';
-            }
-            else
-              $route = 'entity.' . $entity_type_id . '.add_form';
-            $build['add_new'] = [
-              '#type' => 'link',
-              '#title' => ' + Ajouter',
-              '#url' => Url::fromRoute($route, [
-                $entity_bundle_id => $entityType->id()
-              ])
-            ];
-            $header = [
-              'id' => '#id',
-              'name' => 'Titre',
-              'user' => 'Auteur',
-              'created' => 'Date creation',
-              'operations' => 'operations'
-            ];
-            $rows = [];
-            $entities = \Drupal::entityTypeManager()->getStorage($entity_type_id)->loadMultiple($ids);
-            // dump($entities);
-            foreach ($entities as $entity) {
-              /**
-               *
-               * @var \Drupal\blockscontent\Entity\BlocksContents $entity
-               */
-              $id = $entity->id();
-              $rows[$id] = [
-                'id' => $id,
-                'name' => $entity->hasLinkTemplate('canonical') ? [
-                  'data' => [
-                    '#type' => 'link',
-                    '#title' => $entity->label(),
-                    '#weight' => 10,
-                    '#url' => $entity->toUrl('canonical')
-                  ]
-                ] : $entity->label(),
-                'user' => $entity->getOwner()->getDisplayName(),
-                'created' => $formatterDate->format($entity->getCreatedTime()),
-                'operations' => [
-                  'data' => $this->buildOperations($entity)
-                ]
-              ];
-            }
-            if ($rows) {
-              $build['table'] = [
-                '#type' => 'table',
-                '#header' => $header,
-                '#title' => 'Titre de la table',
-                '#rows' => $rows,
-                '#empty' => 'Aucun contenu',
-                '#attributes' => [
-                  'class' => [
-                    'page-content'
-                  ]
-                ]
-                // '#cache' => [
-                // 'contexts' => $this->entityType->getListCacheContexts(),
-                // 'tags' => $this->entityType->getListCacheTags(),
-                // ],
-              ];
-              $build['pager'] = [
-                '#type' => 'pager'
-              ];
-              $datas[] = $build;
-            }
-          }
-        }
-      }
+    $build['header'] = [
+      '#type' => 'html_tag',
+      '#tag' => 'h2',
+      '#value' => $entityType->label()
+    ];
+    // Add new content
+    if ($entity_type_id == 'node') {
+      $route = 'node.add';
+    }
+    else
+      $route = 'entity.' . $entity_type_id . '.add_form';
+    $build['add_new'] = [
+      '#type' => 'link',
+      '#title' => ' + Ajouter',
+      '#url' => Url::fromRoute($route, [
+        $entity_bundle_id => $entityType->id()
+      ])
+    ];
+    $header = [
+      'id' => '#id',
+      'name' => 'Titre',
+      'user' => 'Auteur',
+      'created' => 'Date creation',
+      'operations' => 'operations'
+    ];
+    $rows = [];
+    $entities = \Drupal::entityTypeManager()->getStorage($entity_type_id)->loadMultiple($ids);
+    // dump($entities);
+    foreach ($entities as $entity) {
+      /**
+       *
+       * @var \Drupal\blockscontent\Entity\BlocksContents $entity
+       */
+      $id = $entity->id();
+      $rows[$id] = [
+        'id' => $id,
+        'name' => $entity->hasLinkTemplate('canonical') ? [
+          'data' => [
+            '#type' => 'link',
+            '#title' => $entity->label(),
+            '#weight' => 10,
+            '#url' => $entity->toUrl('canonical')
+          ]
+        ] : $entity->label(),
+        'user' => $entity->getOwner()->getDisplayName(),
+        'created' => $formatterDate->format($entity->getCreatedTime()),
+        'operations' => [
+          'data' => $this->buildOperations($entity)
+        ]
+      ];
+    }
+    if ($rows) {
+      $build['table'] = [
+        '#type' => 'table',
+        '#header' => $header,
+        '#title' => 'Titre de la table',
+        '#rows' => $rows,
+        '#empty' => 'Aucun contenu',
+        '#attributes' => [
+          'class' => [
+            'page-content00'
+          ]
+        ]
+        
+        // '#cache' => [
+        // 'contexts' => $this->entityType->getListCacheContexts(),
+        // 'tags' => $this->entityType->getListCacheTags(),
+        // ],
+      ];
+      $build['pager'] = [
+        '#type' => 'pager'
+      ];
+      $link = 'internal:/manage-' . $entity_type_id . '/' . $entityType->id();
+      $urlDetail = \Drupal\Core\Url::fromUri($link, [
+        'query' => [
+          'destination' => $this->getPathInfo()
+        ]
+      ]);
+      // $urlDetail =
+      // Url::fromRoute('manage_module_config.manage_entities.entity_type', [
+      // 'plugin_id' => $this->pluginId,
+      // 'entity_type' => $entity_type_id,
+      // 'bundle' => $entityType->id()
+      // ]);
+      $build['datails'] = [
+        '#type' => 'html_tag',
+        '#tag' => 'div',
+        '#attributes' => [
+          'class' => [
+            'page-content'
+          ]
+        ],
+        [
+          '#type' => 'link',
+          '#title' => 'Plus de details',
+          '#url' => $urlDetail,
+          '#options' => [
+            'attributes' => [
+              'class' => [
+                'button'
+              ]
+            ]
+          ]
+        ]
+      ];
+      $datas[] = $build;
     }
   }
   

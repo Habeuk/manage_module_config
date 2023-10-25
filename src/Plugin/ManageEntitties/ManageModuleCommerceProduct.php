@@ -39,72 +39,113 @@ class ManageModuleCommerceProduct extends ManageEntittiesPluginBase {
     $definitions = $this->getPluginDefinition();
     if ($definitions['entities']) {
       foreach ($definitions['entities'] as $entity_type_id) {
-        /**
-         * On utilise list builder, en se basant sur les fonctions specifique
-         * qu'on a ajouté.
-         *
-         * @var \Drupal\Core\Entity\EntityListBuilderInterface $ListBuilder
-         */
-        // $ListBuilder =
-        // \Drupal::entityTypeManager()->getListBuilder($entity_type_id);
-        // // apply custom filter
-        // $datas[] = $ListBuilder->render();
-        $query = \Drupal::entityTypeManager()->getStorage($entity_type_id)->getQuery();
-        $query->condition($domainAccessField, lesroidelareno::getCurrentDomainId());
-        $query->accessCheck(TRUE);
-        $query->pager(10);
-        $ids = $query->execute();
-        if ($ids) {
-          $header = [
-            'id' => '#id',
-            'name' => 'Titre',
-            'user' => 'Auteur',
-            'operations' => 'operations'
-          ];
-          $rows = [];
-          $entities = \Drupal::entityTypeManager()->getStorage($entity_type_id)->loadMultiple($ids);
-          // dump($entities);
-          foreach ($entities as $entity) {
-            /**
-             *
-             * @var \Drupal\blockscontent\Entity\BlocksContents $entity
-             */
-            $id = $entity->id();
-            $rows[$id] = [
-              'id' => $id,
-              'name' => $entity->hasLinkTemplate('canonical') ? [
-                'data' => [
-                  '#type' => 'link',
-                  '#title' => $entity->label(),
-                  '#weight' => 10,
-                  '#url' => $entity->toUrl('canonical')
-                ]
-              ] : $entity->label(),
-              'user' => $entity->getOwner()->getDisplayName(),
-              'operations' => [
-                'data' => $this->buildOperations($entity)
-              ]
-            ];
-          }
-          if ($rows) {
-            $build['table'] = [
-              '#type' => 'table',
-              '#header' => $header,
-              '#title' => 'Titre de la table',
-              '#rows' => $rows,
-              '#empty' => 'Aucun contenu'
-              // '#cache' => [
-              // 'contexts' => $this->entityType->getListCacheContexts(),
-              // 'tags' => $this->entityType->getListCacheTags(),
-              // ],
-            ];
-            $build['pager'] = [
-              '#type' => 'pager'
-            ];
-            $datas[] = $build;
+        $entityStorage = \Drupal::entityTypeManager()->getStorage($entity_type_id);
+        $entity_bundle_id = $entityStorage->getEntityType()->getBundleEntityType();
+        $entitiesType = \Drupal::entityTypeManager()->getStorage($entity_bundle_id)->loadMultiple();
+        if ($entitiesType) {
+          foreach ($entitiesType as $entityType) {
+            $query = \Drupal::entityTypeManager()->getStorage($entity_type_id)->getQuery();
+            $query->condition($domainAccessField, lesroidelareno::getCurrentDomainId());
+            $query->condition('type', $entityType->id());
+            $query->accessCheck(TRUE);
+            $query->sort('created', 'DESC');
+            $query->pager(10);
+            $ids = $query->execute();
+            if ($ids) {
+              $entities = $entityStorage->loadMultiple($ids);
+              $this->getEntities($entities, $entityType, $entity_type_id, $entity_bundle_id, $datas);
+            }
           }
         }
       }
+    }
+  }
+  
+  protected function getEntities($entities, $entityType, $entity_type_id, $entity_bundle_id, &$datas) {
+    foreach ($entities as $entity) {
+      /**
+       *
+       * @var \Drupal\blockscontent\Entity\BlocksContents $entity
+       */
+      $id = $entity->id();
+      $rows[$id] = [
+        'id' => $id,
+        'name' => $entity->hasLinkTemplate('canonical') ? [
+          'data' => [
+            '#type' => 'link',
+            '#title' => $entity->label(),
+            '#weight' => 10,
+            '#url' => $entity->toUrl('canonical')
+          ]
+        ] : $entity->label(),
+        'user' => $entity->getOwner()->getDisplayName(),
+        'operations' => [
+          'data' => $this->buildOperations($entity)
+        ]
+      ];
+    }
+    if ($rows) {
+      $header = [
+        'id' => '#id',
+        'name' => 'Titre',
+        'user' => 'Auteur',
+        'operations' => 'operations'
+      ];
+      $build['header'] = [
+        '#type' => 'html_tag',
+        '#tag' => 'h2',
+        '#value' => $entityType->label()
+      ];
+      $route = 'entity.' . $entity_type_id . '.add_form';
+      $build['add_new'] = [
+        '#type' => 'link',
+        '#title' => ' + Ajouter un produit',
+        '#url' => Url::fromRoute($route, [
+          $entity_bundle_id => $entityType->id()
+        ])
+      ];
+      $build['table'] = [
+        '#type' => 'table',
+        '#header' => $header,
+        '#title' => 'Titre de la table',
+        '#rows' => $rows,
+        '#empty' => 'Aucun contenu'
+        // '#cache' => [
+        // 'contexts' => $this->entityType->getListCacheContexts(),
+        // 'tags' => $this->entityType->getListCacheTags(),
+        // ],
+      ];
+      $build['pager'] = [
+        '#type' => 'pager'
+      ];
+      $link = 'internal:/manage-' . $entity_type_id . '/' . $entityType->id();
+      $urlDetail = \Drupal\Core\Url::fromUri($link, [
+        'query' => [
+          'destination' => $this->getPathInfo()
+        ]
+      ]);
+      $build['datails'] = [
+        '#type' => 'html_tag',
+        '#tag' => 'div',
+        '#attributes' => [
+          'class' => [
+            'page-content'
+          ]
+        ],
+        [
+          '#type' => 'link',
+          '#title' => 'Plus de details',
+          '#url' => $urlDetail,
+          '#options' => [
+            'attributes' => [
+              'class' => [
+                'button'
+              ]
+            ]
+          ]
+        ]
+      ];
+      $datas[] = $build;
     }
   }
   
