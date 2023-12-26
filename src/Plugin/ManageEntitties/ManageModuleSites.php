@@ -6,6 +6,7 @@ use Drupal\manage_module_config\ManageEntitties\ManageEntittiesPluginBase;
 use Drupal\lesroidelareno\lesroidelareno;
 use Drupal\Core\Url;
 use Drupal\Core\Datetime\DateFormatter;
+use Drupal\Core\Entity\ContentEntityInterface;
 
 /**
  * Plugin implementation of the manage_entitties.
@@ -133,6 +134,20 @@ class ManageModuleSites extends ManageEntittiesPluginBase {
         }
       }
     }
+  }
+  
+  /**
+   *
+   * {@inheritdoc}
+   */
+  public function getOperations(ContentEntityInterface $entity) {
+    $operations['buy_abonnement'] = [
+      'title' => $this->t("Gerer l'abonnement"),
+      'weight' => 10,
+      'url' => $this->ensureDestination($entity->toUrl('edit-form'))
+    ];
+    $operations += parent::getOperations($entity);
+    return $operations;
   }
   
   /**
