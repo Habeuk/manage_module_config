@@ -92,18 +92,23 @@ class ManageEntittiesPluginManager extends DefaultPluginManager {
       }
       else
         $url = NULL;
+      
       if ($instance->getConfiguration()['enable']) {
         $number = $instance->getNumbers();
-        if (!empty($number))
-          $configs[] = [
-            '#theme' => 'manage_module_config_card_info',
-            '#name' => $instance->GetName(),
-            '#description' => $instance->getDescription(),
-            '#icon_svg' => $instance->getIconSvg(),
-            '#icon_svg_class' => 'btn-circle ' . $instance->getIconSvgClass(),
-            '#route' => $url,
-            '#number' => $number
-          ];
+        // dump($number);
+        /**
+         * Il faut trouver une autre approche pour activer les entites.
+         */
+        // if (!empty($number))
+        $configs[] = [
+          '#theme' => 'manage_module_config_card_info',
+          '#name' => $instance->GetName(),
+          '#description' => $instance->getDescription(),
+          '#icon_svg' => $instance->getIconSvg(),
+          '#icon_svg_class' => 'btn-circle ' . $instance->getIconSvgClass(),
+          '#route' => $url,
+          '#number' => $number
+        ];
       }
     }
     return $configs;
