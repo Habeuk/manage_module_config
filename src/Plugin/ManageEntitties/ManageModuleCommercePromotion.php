@@ -19,7 +19,7 @@ use Drupal\Core\Url;
  * )
  */
 class ManageModuleCommercePromotion extends ManageEntittiesPluginBase {
-  
+
   /**
    *
    * {@inheritdoc}
@@ -28,7 +28,7 @@ class ManageModuleCommercePromotion extends ManageEntittiesPluginBase {
   public function GetName() {
     return $this->configuration['name'];
   }
-  
+
   /**
    *
    * {@inheritdoc}
@@ -56,15 +56,14 @@ class ManageModuleCommercePromotion extends ManageEntittiesPluginBase {
           if ($ids) {
             $entities = $entityStorage->loadMultiple($ids);
             $this->getEntities($entities, $entityType, $entity_type_id, $datas);
-          }
-          else {
+          } else {
             $this->getEntities($entities, $entityType, $entity_type_id, $datas);
           }
         }
       }
     }
   }
-  
+
   protected function getEntities($entities, $entityType, $entity_type_id, &$datas) {
     $rows = [];
     foreach ($entities as $entity) {
@@ -89,7 +88,7 @@ class ManageModuleCommercePromotion extends ManageEntittiesPluginBase {
         ]
       ];
     }
-    
+
     $header = [
       'id' => '#id',
       'name' => 'Titre',
@@ -150,7 +149,7 @@ class ManageModuleCommercePromotion extends ManageEntittiesPluginBase {
     ];
     $datas[] = $build;
   }
-  
+
   /**
    *
    * {@inheritdoc}
@@ -171,7 +170,7 @@ class ManageModuleCommercePromotion extends ManageEntittiesPluginBase {
       ]
     ]);
   }
-  
+
   /**
    *
    * {@inheritdoc}
@@ -185,12 +184,13 @@ class ManageModuleCommercePromotion extends ManageEntittiesPluginBase {
       foreach ($definitions['entities'] as $entity_type_id) {
         $query = \Drupal::entityTypeManager()->getStorage($entity_type_id)->getQuery();
         $query->condition($domainAccessField, lesroidelareno::getCurrentDomainId());
+        $query->accessCheck(FALSE);
         $numbers += $query->count()->execute();
       }
     }
     return $numbers;
   }
-  
+
   /**
    *
    * {@inheritdoc}
@@ -199,7 +199,7 @@ class ManageModuleCommercePromotion extends ManageEntittiesPluginBase {
   public function getDescription() {
     return $this->configuration['description'];
   }
-  
+
   /**
    *
    * {@inheritdoc}
@@ -214,5 +214,4 @@ class ManageModuleCommercePromotion extends ManageEntittiesPluginBase {
       'enable' => true
     ] + parent::defaultConfiguration();
   }
-  
 }

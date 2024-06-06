@@ -22,7 +22,7 @@ use Drupal\Core\Datetime\DateFormatter;
  * )
  */
 class ManageModuleEntities extends ManageEntittiesPluginBase {
-  
+
   /**
    *
    * {@inheritdoc}
@@ -31,7 +31,7 @@ class ManageModuleEntities extends ManageEntittiesPluginBase {
   public function GetName() {
     return $this->configuration['name'];
   }
-  
+
   /**
    * Permet de construire un rendu advancé avec des recherches et des filtres.
    * Si possible avec une option en ajax. (plus tard).
@@ -56,7 +56,7 @@ class ManageModuleEntities extends ManageEntittiesPluginBase {
          */
         $form = \Drupal::formBuilder()->getForm('Drupal\manage_module_config\Form\EntitiesFilter');
         $datas[] = $form;
-        
+
         /**
          *
          * @var DateFormatter $formatterDate
@@ -116,7 +116,7 @@ class ManageModuleEntities extends ManageEntittiesPluginBase {
       }
     }
   }
-  
+
   /**
    *
    * {@inheritdoc}
@@ -124,14 +124,14 @@ class ManageModuleEntities extends ManageEntittiesPluginBase {
    */
   public function buildCollections(array &$datas) {
     $definitions = $this->getPluginDefinition();
-    
+
     if ($definitions['entities']) {
       foreach ($definitions['entities'] as $entity_type_id) {
         $this->getEntities($entity_type_id, $datas);
       }
     }
   }
-  
+
   protected function getEntities($entity_type_id, &$datas) {
     $domainAccessField = \Drupal\domain_access\DomainAccessManagerInterface::DOMAIN_ACCESS_FIELD;
     $entity = \Drupal::entityTypeManager()->getStorage($entity_type_id);
@@ -150,7 +150,7 @@ class ManageModuleEntities extends ManageEntittiesPluginBase {
       }
     }
   }
-  
+
   /**
    * --
    */
@@ -168,8 +168,7 @@ class ManageModuleEntities extends ManageEntittiesPluginBase {
     // Add new content
     if ($entity_type_id == 'node') {
       $route = 'node.add';
-    }
-    else
+    } else
       $route = 'entity.' . $entity_type_id . '.add_form';
     $build['add_new'] = [
       '#type' => 'link',
@@ -223,7 +222,7 @@ class ManageModuleEntities extends ManageEntittiesPluginBase {
             'page-content00'
           ]
         ]
-        
+
         // '#cache' => [
         // 'contexts' => $this->entityType->getListCacheContexts(),
         // 'tags' => $this->entityType->getListCacheTags(),
@@ -268,7 +267,7 @@ class ManageModuleEntities extends ManageEntittiesPluginBase {
       $datas[] = $build;
     }
   }
-  
+
   /**
    *
    * {@inheritdoc}
@@ -289,7 +288,7 @@ class ManageModuleEntities extends ManageEntittiesPluginBase {
       ]
     ]);
   }
-  
+
   /**
    *
    * {@inheritdoc}
@@ -303,12 +302,13 @@ class ManageModuleEntities extends ManageEntittiesPluginBase {
       foreach ($definitions['entities'] as $entity_type_id) {
         $query = \Drupal::entityTypeManager()->getStorage($entity_type_id)->getQuery();
         $query->condition($domainAccessField, lesroidelareno::getCurrentDomainId());
+        $query->accessCheck(FALSE);
         $numbers += $query->count()->execute();
       }
     }
     return $numbers;
   }
-  
+
   /**
    *
    * {@inheritdoc}
@@ -317,7 +317,7 @@ class ManageModuleEntities extends ManageEntittiesPluginBase {
   public function getDescription() {
     return $this->configuration['description'];
   }
-  
+
   /**
    *
    * {@inheritdoc}
@@ -333,5 +333,4 @@ class ManageModuleEntities extends ManageEntittiesPluginBase {
       'enable' => true
     ] + parent::defaultConfiguration();
   }
-  
 }

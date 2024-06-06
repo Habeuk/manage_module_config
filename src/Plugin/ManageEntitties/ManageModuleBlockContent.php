@@ -19,7 +19,7 @@ use Drupal\Core\Url;
  * )
  */
 class ManageModuleBlockContent extends ManageEntittiesPluginBase {
-  
+
   /**
    *
    * {@inheritdoc}
@@ -28,7 +28,7 @@ class ManageModuleBlockContent extends ManageEntittiesPluginBase {
   public function GetName() {
     return $this->configuration['name'];
   }
-  
+
   /**
    *
    * {@inheritdoc}
@@ -107,7 +107,7 @@ class ManageModuleBlockContent extends ManageEntittiesPluginBase {
       }
     }
   }
-  
+
   /**
    *
    * {@inheritdoc}
@@ -122,7 +122,7 @@ class ManageModuleBlockContent extends ManageEntittiesPluginBase {
       ]
     ]);
   }
-  
+
   /**
    *
    * {@inheritdoc}
@@ -136,12 +136,13 @@ class ManageModuleBlockContent extends ManageEntittiesPluginBase {
       foreach ($definitions['entities'] as $entity_type_id) {
         $query = \Drupal::entityTypeManager()->getStorage($entity_type_id)->getQuery();
         $query->condition($domainAccessField, lesroidelareno::getCurrentDomainId());
+        $query->accessCheck(FALSE);
         $numbers += $query->count()->execute();
       }
     }
     return $numbers;
   }
-  
+
   /**
    *
    * {@inheritdoc}
@@ -150,7 +151,7 @@ class ManageModuleBlockContent extends ManageEntittiesPluginBase {
   public function getDescription() {
     return $this->configuration['description'];
   }
-  
+
   /**
    *
    * {@inheritdoc}
@@ -166,5 +167,4 @@ class ManageModuleBlockContent extends ManageEntittiesPluginBase {
       'enable' => true
     ] + parent::defaultConfiguration();
   }
-  
 }
