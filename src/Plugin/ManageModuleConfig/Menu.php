@@ -52,11 +52,13 @@ class Menu extends ManageModuleConfigPluginBase {
         $menuQuery->condition("id", "main", 'CONTAINS');
         $menuIds = $menuQuery->execute();
         if (!empty($menuIds)) {
-          $id = reset($menuIds);
-          $url = Url::fromRoute('entity.menu.edit_form', [
-            'menu' => $id
-          ]);
+          $main_menu_id = reset($menuIds);
         }
+      }
+      if (isset($main_menu_id)) {
+        $url = Url::fromRoute('entity.menu.edit_form', [
+          'menu' => $main_menu_id
+        ]);
       }
     }
     return $url;
