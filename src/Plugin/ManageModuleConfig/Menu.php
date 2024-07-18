@@ -38,7 +38,7 @@ class Menu extends ManageModuleConfigPluginBase {
     $RequestStack = \Drupal::service('request_stack');
     $Request = $RequestStack->getCurrentRequest();
     $url = null;
-    if (false && \Drupal::moduleHandler()->moduleExists('lesroidelareno')) {
+    if (\Drupal::moduleHandler()->moduleExists('lesroidelareno')) {
       $url = Url::fromRoute('lesroidelareno.manage_menu', [], [
         'query' => [
           'destination' => $Request->getPathInfo()
