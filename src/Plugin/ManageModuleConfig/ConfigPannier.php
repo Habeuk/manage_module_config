@@ -4,7 +4,6 @@ namespace Drupal\manage_module_config\Plugin\ManageModuleConfig;
 
 use Drupal\manage_module_config\ManageModuleConfigPluginBase;
 use Drupal\Core\Url;
-use Drupal\lesroidelareno\lesroidelareno;
 
 /**
  * Gestion Panier.

@@ -5,7 +5,6 @@ namespace Drupal\manage_module_config\Plugin\Block;
 use Drupal\Core\Block\BlockBase;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
-use Drupal\lesroidelareno\lesroidelareno;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 
 /**
@@ -24,12 +23,12 @@ class EntitiesListsBlock extends BlockBase implements ContainerFactoryPluginInte
    * @var EntityTypeManagerInterface
    */
   protected $entityTypeManager;
-  
+
   function __construct(array $configuration, $plugin_id, $plugin_definition, EntityTypeManagerInterface $entity_type_manager) {
     parent::__construct($configuration, $plugin_id, $plugin_definition);
     $this->entityTypeManager = $entity_type_manager;
   }
-  
+
   /**
    *
    * {@inheritdoc}
@@ -37,7 +36,7 @@ class EntitiesListsBlock extends BlockBase implements ContainerFactoryPluginInte
   public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition) {
     return new static($configuration, $plugin_id, $plugin_definition, $container->get('entity_type.manager'));
   }
-  
+
   /**
    *
    * {@inheritdoc}
@@ -55,12 +54,19 @@ class EntitiesListsBlock extends BlockBase implements ContainerFactoryPluginInte
         ]
       ]
     ];
-    if (lesroidelareno::userIsAdministratorSite())
-      $this->loadAllentities($configs);
+    if (\Drupal::moduleHandler()->moduleExists('lesroidelareno')) {
+      if (\Drupal\lesroidelareno\lesroidelareno::userIsAdministratorSite())
+        $this->loadAllentities($configs);
+    } else {
+      $current_user = \Drupal::currentUser();
+      if (in_array('administrator', $current_user->getRoles())) {
+        $this->loadAllentities($configs);
+      }
+    }
     $build['content']['container'] = $configs;
     return $build;
   }
-  
+
   /**
    *
    * @param array $configs
@@ -74,7 +80,7 @@ class EntitiesListsBlock extends BlockBase implements ContainerFactoryPluginInte
     $manage_module_entities->buildResumes($configs);
     // $manage_module_entities->buildResumes();
   }
-  
+
   /**
    * Charge toute le configurationa active
    */
@@ -88,7 +94,9 @@ class EntitiesListsBlock extends BlockBase implements ContainerFactoryPluginInte
     $numbers = 0;
     foreach ($entities_type as $entity_type_id) {
       $query = $this->entityTypeManager->getStorage($entity_type_id)->getQuery();
-      $query->condition($domainAccessField, lesroidelareno::getCurrentDomainId());
+      if (\Drupal::moduleHandler()->moduleExists('lesroidelareno')) {
+        $query->condition($domainAccessField, \Drupal\lesroidelareno\lesroidelareno::getCurrentDomainId());
+      }
       $numbers += $query->count()->execute();
     }
     if ($numbers > 0)
@@ -104,7 +112,7 @@ class EntitiesListsBlock extends BlockBase implements ContainerFactoryPluginInte
       ];
     return $configs;
   }
-  
+
   /**
    * Charge toue le configurationa active
    */
@@ -116,7 +124,9 @@ class EntitiesListsBlock extends BlockBase implements ContainerFactoryPluginInte
     $numbers = 0;
     foreach ($entities_type as $entity_type_id) {
       $query = $this->entityTypeManager->getStorage($entity_type_id)->getQuery();
-      $query->condition($domainAccessField, lesroidelareno::getCurrentDomainId());
+      if (\Drupal::moduleHandler()->moduleExists('lesroidelareno')) {
+        $query->condition($domainAccessField, \Drupal\lesroidelareno\lesroidelareno::getCurrentDomainId());
+      }
       $numbers += $query->count()->execute();
     }
     if ($numbers > 0)
@@ -129,10 +139,10 @@ class EntitiesListsBlock extends BlockBase implements ContainerFactoryPluginInte
         '#route' => null,
         '#number' => $numbers
       ];
-    
+
     return $configs;
   }
-  
+
   /**
    * Charge tous les produits
    */
@@ -144,7 +154,9 @@ class EntitiesListsBlock extends BlockBase implements ContainerFactoryPluginInte
     $numbers = 0;
     foreach ($entities_type as $entity_type_id) {
       $query = $this->entityTypeManager->getStorage($entity_type_id)->getQuery();
-      $query->condition($domainAccessField, lesroidelareno::getCurrentDomainId());
+      if (\Drupal::moduleHandler()->moduleExists('lesroidelareno')) {
+        $query->condition($domainAccessField, \Drupal\lesroidelareno\lesroidelareno::getCurrentDomainId());
+      }
       $numbers += $query->count()->execute();
     }
     if ($numbers > 0) {
@@ -165,10 +177,12 @@ class EntitiesListsBlock extends BlockBase implements ContainerFactoryPluginInte
       $numbers = 0;
       foreach ($entities_type as $entity_type_id) {
         $query = $this->entityTypeManager->getStorage($entity_type_id)->getQuery();
-        $query->condition($domainAccessField, lesroidelareno::getCurrentDomainId());
+        if (\Drupal::moduleHandler()->moduleExists('lesroidelareno')) {
+          $query->condition($domainAccessField, \Drupal\lesroidelareno\lesroidelareno::getCurrentDomainId());
+        }
         $numbers += $query->count()->execute();
       }
-      
+
       $configs[] = [
         '#theme' => 'manage_module_config_card_info',
         '#name' => 'Commandes',
@@ -179,8 +193,7 @@ class EntitiesListsBlock extends BlockBase implements ContainerFactoryPluginInte
         '#number' => $numbers
       ];
     }
-    
+
     return $configs;
   }
-  
 }

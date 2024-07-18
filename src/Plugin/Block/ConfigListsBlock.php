@@ -3,7 +3,6 @@
 namespace Drupal\manage_module_config\Plugin\Block;
 
 use Drupal\Core\Block\BlockBase;
-use Drupal\lesroidelareno\lesroidelareno;
 
 /**
  * Liste les configuration accessible.
@@ -15,14 +14,24 @@ use Drupal\lesroidelareno\lesroidelareno;
  * )
  */
 class ConfigListsBlock extends BlockBase {
-  
+
   /**
    *
    * {@inheritdoc}
    */
   public function build() {
     $build = [];
-    if (lesroidelareno::userIsAdministratorSite())
+    $isAdmin = false;
+    if (\Drupal::moduleHandler()->moduleExists('lesroidelareno')) {
+      if (\Drupal\lesroidelareno\lesroidelareno::userIsAdministratorSite())
+        $isAdmin = true;
+    } else {
+      $current_user = \Drupal::currentUser();
+      if (in_array('administrator', $current_user->getRoles())) {
+        $isAdmin = true;
+      }
+    }
+    if ($isAdmin)
       $build['content']['container'] = [
         '#theme' => 'manage_module_config_card',
         '#header' => "Configurations",
@@ -30,7 +39,7 @@ class ConfigListsBlock extends BlockBase {
       ];
     return $build;
   }
-  
+
   /**
    * Charge toue le configurationa active
    */
@@ -42,5 +51,4 @@ class ConfigListsBlock extends BlockBase {
     $manage_module_config = \Drupal::service('plugin.manager.manage_module_config');
     return $manage_module_config->getActiveConfigs();
   }
-  
 }
