@@ -15,7 +15,6 @@ class SettingsForm extends ConfigFormBase {
    * {@inheritdoc}
    */
   public function getFormId() {
-    \Drupal\manage_module_config\Form\EntitiesFilter::$users = [];
     return 'manage_module_config_settings';
   }
   
