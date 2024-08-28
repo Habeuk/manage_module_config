@@ -74,6 +74,7 @@ class ManageModuleConfigPluginManager extends DefaultPluginManager {
     $plugins = $this->getDefinitions();
     if (!\Drupal::moduleHandler()->moduleExists('lesroidelareno')) {
       unset($plugins["export_current_theme"]);
+      unset($plugins["manage_module_config_language"]);
     }
 
     foreach ($plugins as $plugin) {
