@@ -5,8 +5,8 @@
 				<span class=" icone btn {{ icon_svg_class }}">
 					{{ icon_svg|raw }}
 				</span>
-				<div class="ml-3">
-					<h5 class="font-weight-bold titre">{{ name }}</h5>
+				<div class="ms-3">
+					<h5 class="fw-bold titre">{{ name }}</h5>
 					<div>{{ description|raw }}</div>
 					<div class="progress d-none">
 						<div class="progress-bar bg-danger" role="progressbar"
@@ -15,8 +15,8 @@
 					</div>
 				</div>
 				{% if number is not same as (null) %}
-				<div class="ml-auto">
-					<h2 class="display-7 mb-0 font-weight-light"> {{ number }}</h2>
+				<div class="ms-auto">
+					<h2 class="display-7 mb-0 fw-light"> {{ number }}</h2>
 				</div>
 				{% endif %}
 			</div>

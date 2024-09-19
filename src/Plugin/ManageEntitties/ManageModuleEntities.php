@@ -3,7 +3,6 @@
 namespace Drupal\manage_module_config\Plugin\ManageEntitties;
 
 use Drupal\manage_module_config\ManageEntitties\ManageEntittiesPluginBase;
-use Drupal\lesroidelareno\lesroidelareno;
 use Drupal\Core\Url;
 use Drupal\Core\Datetime\DateFormatter;
 
@@ -45,7 +44,9 @@ class ManageModuleEntities extends ManageEntittiesPluginBase {
     if ($definitions['entities'] && in_array($entity_type_id, $definitions['entities'])) {
       $query = \Drupal::entityTypeManager()->getStorage($entity_type_id)->getQuery();
       $query->accessCheck(TRUE);
-      $query->condition($domainAccessField, lesroidelareno::getCurrentDomainId());
+      if (\Drupal::moduleHandler()->moduleExists('lesroidelareno')) {
+        $query->condition($domainAccessField, \Drupal\lesroidelareno\lesroidelareno::getCurrentDomainId());
+      }
       $query->condition('type', $bundle);
       $query->sort('created', 'DESC');
       $query->pager(10);
@@ -139,7 +140,9 @@ class ManageModuleEntities extends ManageEntittiesPluginBase {
     $entitiesType = \Drupal::entityTypeManager()->getStorage($entity_bundle_id)->loadMultiple();
     foreach ($entitiesType as $entityType) {
       $query = \Drupal::entityTypeManager()->getStorage($entity_type_id)->getQuery();
-      $query->condition($domainAccessField, lesroidelareno::getCurrentDomainId());
+      if (\Drupal::moduleHandler()->moduleExists('lesroidelareno')) {
+        $query->condition($domainAccessField, \Drupal\lesroidelareno\lesroidelareno::getCurrentDomainId());
+      }
       $query->condition('type', $entityType->id());
       $query->accessCheck(TRUE);
       $query->sort('created', 'DESC');
@@ -301,7 +304,9 @@ class ManageModuleEntities extends ManageEntittiesPluginBase {
       $domainAccessField = \Drupal\domain_access\DomainAccessManagerInterface::DOMAIN_ACCESS_FIELD;
       foreach ($definitions['entities'] as $entity_type_id) {
         $query = \Drupal::entityTypeManager()->getStorage($entity_type_id)->getQuery();
-        $query->condition($domainAccessField, lesroidelareno::getCurrentDomainId());
+        if (\Drupal::moduleHandler()->moduleExists('lesroidelareno')) {
+          $query->condition($domainAccessField, \Drupal\lesroidelareno\lesroidelareno::getCurrentDomainId());
+        }
         $query->accessCheck(FALSE);
         $numbers += $query->count()->execute();
       }

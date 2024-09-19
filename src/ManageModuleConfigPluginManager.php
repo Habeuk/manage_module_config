@@ -11,7 +11,7 @@ use Stephane888\Debug\Repositories\ConfigDrupal;
  * ManageModuleConfig plugin manager.
  */
 class ManageModuleConfigPluginManager extends DefaultPluginManager {
-  
+
   /**
    * Constructs ManageModuleConfigPluginManager object.
    *
@@ -29,7 +29,7 @@ class ManageModuleConfigPluginManager extends DefaultPluginManager {
     $this->alterInfo('manage_module_config_info');
     $this->setCacheBackend($cache_backend, 'manage_module_config_plugins');
   }
-  
+
   /**
    * --
    */
@@ -50,7 +50,7 @@ class ManageModuleConfigPluginManager extends DefaultPluginManager {
     }
     return $options;
   }
-  
+
   /**
    * Permet de recuperer la liste des configurables accessible par le domaine
    * encours.
@@ -72,6 +72,11 @@ class ManageModuleConfigPluginManager extends DefaultPluginManager {
       ]
     ];
     $plugins = $this->getDefinitions();
+    if (!\Drupal::moduleHandler()->moduleExists('lesroidelareno')) {
+      unset($plugins["export_current_theme"]);
+      unset($plugins["manage_module_config_language"]);
+    }
+
     foreach ($plugins as $plugin) {
       /**
        *
@@ -83,8 +88,7 @@ class ManageModuleConfigPluginManager extends DefaultPluginManager {
       $url = $instance->getRoute();
       if ($url) {
         $url = $url->toString();
-      }
-      else
+      } else
         $url = NULL;
       if ($instance->IsEnabled()) {
         $configs[] = [
@@ -95,8 +99,7 @@ class ManageModuleConfigPluginManager extends DefaultPluginManager {
           '#icon_svg_class' => 'btn-circle ' . $instance->getIconSvgClass(),
           '#route' => $url
         ];
-      }
-      elseif ($activePlugins && !empty($activePlugins[$plugin['id']])) {
+      } elseif ($activePlugins && !empty($activePlugins[$plugin['id']])) {
         $configs[] = [
           '#theme' => 'manage_module_config_card_info',
           '#name' => $instance->GetName(),
@@ -109,5 +112,4 @@ class ManageModuleConfigPluginManager extends DefaultPluginManager {
     }
     return $configs;
   }
-  
 }

@@ -4,7 +4,6 @@ namespace Drupal\manage_module_config\Plugin\ManageModuleConfig;
 
 use Drupal\manage_module_config\ManageModuleConfigPluginBase;
 use Drupal\Core\Url;
-use Drupal\lesroidelareno\lesroidelareno;
 
 /**
  * Gestion du menu.
@@ -16,7 +15,7 @@ use Drupal\lesroidelareno\lesroidelareno;
  * )
  */
 class ConfigTheme extends ManageModuleConfigPluginBase {
-  
+
   /**
    *
    * {@inheritdoc}
@@ -25,16 +24,22 @@ class ConfigTheme extends ManageModuleConfigPluginBase {
   public function GetName() {
     return $this->configuration['name'];
   }
-  
+
   /**
    *
    * {@inheritdoc}
    * @see \Drupal\manage_module_config\ManageModuleConfigInterface::getRoute()
    */
   public function getRoute() {
-    $themeConf = \Drupal::entityTypeManager()->getStorage("config_theme_entity")->loadByProperties([
-      'hostname' => lesroidelareno::getCurrentDomainId()
-    ]);
+    $queryProperties = [
+      "settheme_as_defaut" => true
+    ];
+    if (\Drupal::moduleHandler()->moduleExists('lesroidelareno')) {
+      $queryProperties = [
+        'hostname' => \Drupal\lesroidelareno\lesroidelareno::getCurrentDomainId()
+      ];
+    }
+    $themeConf = \Drupal::entityTypeManager()->getStorage("config_theme_entity")->loadByProperties($queryProperties);
     if (!empty($themeConf)) {
       $themeConf = reset($themeConf);
       /**
@@ -52,7 +57,7 @@ class ConfigTheme extends ManageModuleConfigPluginBase {
       ]);
     }
   }
-  
+
   /**
    *
    * {@inheritdoc}
@@ -61,7 +66,7 @@ class ConfigTheme extends ManageModuleConfigPluginBase {
   public function getDescription() {
     return $this->configuration['description'];
   }
-  
+
   /**
    *
    * {@inheritdoc}
@@ -76,5 +81,4 @@ class ConfigTheme extends ManageModuleConfigPluginBase {
       'enable' => true
     ] + parent::defaultConfiguration();
   }
-  
 }
