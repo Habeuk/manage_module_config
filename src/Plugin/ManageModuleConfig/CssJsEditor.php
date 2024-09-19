@@ -15,7 +15,7 @@ use Drupal\Core\Url;
  * )
  */
 class CssJsEditor extends ManageModuleConfigPluginBase {
-
+  
   /**
    *
    * {@inheritdoc}
@@ -24,7 +24,7 @@ class CssJsEditor extends ManageModuleConfigPluginBase {
   public function GetName() {
     return $this->configuration['name'];
   }
-
+  
   /**
    *
    * {@inheritdoc}
@@ -33,7 +33,7 @@ class CssJsEditor extends ManageModuleConfigPluginBase {
   public function getRoute() {
     return Url::fromRoute('generate_style_theme.managecustom.styles', [], []);
   }
-
+  
   /**
    *
    * {@inheritdoc}
@@ -42,7 +42,7 @@ class CssJsEditor extends ManageModuleConfigPluginBase {
   public function getDescription() {
     return $this->configuration['description'];
   }
-
+  
   /**
    *
    * {@inheritdoc}
@@ -50,8 +50,8 @@ class CssJsEditor extends ManageModuleConfigPluginBase {
    */
   public function defaultConfiguration() {
     return [
-      'name' => 'Editeur de Scss et Js',
-      'description' => "Ajuster l'apparence de votre site via le code scss ou JS.",
+      'name' => t('Css and Js editor'),
+      'description' => t("Adjust the appearance of your site via css or JS code."),
       'enable' => true,
       'icon_svg_class' => 'btn-warning text-white btn-lg',
       'icon_svg' => '<svg xmlns="http://www.w3.org/2000/svg" height="1em" viewBox="0 0 640 512">

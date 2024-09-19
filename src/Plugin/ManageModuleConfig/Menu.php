@@ -15,7 +15,7 @@ use Drupal\Core\Url;
  * )
  */
 class Menu extends ManageModuleConfigPluginBase {
-
+  
   /**
    *
    * {@inheritdoc}
@@ -24,7 +24,7 @@ class Menu extends ManageModuleConfigPluginBase {
   public function GetName() {
     return $this->configuration['name'];
   }
-
+  
   /**
    *
    * {@inheritdoc}
@@ -44,9 +44,10 @@ class Menu extends ManageModuleConfigPluginBase {
           'destination' => $Request->getPathInfo()
         ]
       ]);
-    } else {
+    }
+    else {
       $configs = \Drupal::config("wb_horizon_public.source_site_configs");
-      $main_menu_id   = $configs->get("main_menu_id") ?? null;
+      $main_menu_id = $configs->get("main_menu_id") ?? null;
       if (!isset($main_menu_id)) {
         $menuQuery = \Drupal::entityTypeManager()->getStorage("menu")->getQuery();
         $menuQuery->condition("id", "main", 'CONTAINS');
@@ -63,7 +64,7 @@ class Menu extends ManageModuleConfigPluginBase {
     }
     return $url;
   }
-
+  
   /**
    *
    * {@inheritdoc}
@@ -72,7 +73,7 @@ class Menu extends ManageModuleConfigPluginBase {
   public function getDescription() {
     return $this->configuration['description'];
   }
-
+  
   /**
    *
    * {@inheritdoc}
@@ -80,8 +81,8 @@ class Menu extends ManageModuleConfigPluginBase {
    */
   public function defaultConfiguration() {
     return [
-      'name' => 'Menu',
-      'description' => "Gerer les elements du menu",
+      'name' => t('Menu'),
+      'description' => t("Manage menu items"),
       'icon_svg_class' => 'btn-wbu-thirdly text-white btn-lg',
       'enable' => true
     ] + parent::defaultConfiguration();
