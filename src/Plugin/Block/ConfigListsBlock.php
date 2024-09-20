@@ -34,7 +34,7 @@ class ConfigListsBlock extends BlockBase {
     if ($isAdmin)
       $build['content']['container'] = [
         '#theme' => 'manage_module_config_card',
-        '#header' => "Configurations",
+        '#header' => t("Configurations"),
         '#content' => $this->loadAllActiveConfigs()
       ];
     return $build;
