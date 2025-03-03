@@ -38,3 +38,11 @@ manage_module_config.add_config:
     _controller: '\Drupal\manage_module_config\Controller\ManageModuleConfigController::AddPlugin'
   requirements:
     _role: 'gerant_de_site_web+administrator'
+
+manage_module_config.webform_users:
+  path: '/admin/config/manage-config/webforms-users'
+  defaults:
+    _title: 'Webform users'
+    _form: 'Drupal\manage_module_config\Form\WebformUsers'
+  requirements:
+    _permission: 'administer site configuration'

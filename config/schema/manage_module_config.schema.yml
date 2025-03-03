@@ -6,3 +6,17 @@ manage_module_config.settings:
     example:
       type: string
       label: 'Example'
+
+# Schema for the configuration files of the manage module config module.
+manage_module_config.webformsusers:
+  type: config_object
+  label: 'Manage module config settings'
+  mapping:
+    webforms_users:
+      type: sequence
+      label: 'Selectioner les fomulaires'
+      sequence:
+        type: string
+        label: 'Option'
+
+  

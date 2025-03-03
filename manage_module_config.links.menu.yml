@@ -4,3 +4,8 @@ manage_module_config.settings_form:
   parent: system.admin_config_system
   route_name: manage_module_config.settings_form
   weight: 10
+
+manage_module_config.webform_users:
+  title: Webform users
+  route_name: manage_module_config.webform_users
+  weight: 10
