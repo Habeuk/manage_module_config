@@ -73,7 +73,7 @@ class ManageModuleConfigController extends ControllerBase {
    * --
    */
   public function AddPlugin($domain_id, $site_type_datas_id) {
-    $config = [];
+    $datas = [];
     /**
      *
      * @var \Drupal\creation_site_virtuel\Entity\SiteTypeDatas $entityModel
@@ -88,9 +88,12 @@ class ManageModuleConfigController extends ControllerBase {
       $config = \Drupal::service('config.factory')->getEditable('domain.config.' . $domain_id . '.manage_module_config.settings');
       $config->set('plugins', $entityModel->getPlugins());
       $config->save();
-      $config = $config->getRawData();
+      $datas['plugins'] = $config->getRawData();
+      //
+      $configWebform = \Drupal::service('config.factory')->getEditable('domain.config.' . $domain_id . '.manage_module_config.webformsusers');
+      $configWebform->set('webforms_users', $entityModel->getWebformsUsers());
+      $configWebform->save();
     }
-    return HttpResponse::response($config);
+    return HttpResponse::response($datas);
   }
-  
 }
