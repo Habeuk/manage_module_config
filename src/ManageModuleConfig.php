@@ -41,4 +41,21 @@ class ManageModuleConfig {
       'user_information_generale' => 'Information générale'
     ];
   }
+  
+  /**
+   * Rescupere les formulaires webform que l'utilisateur peut soumettre.
+   *
+   * @return array
+   */
+  static public function webSitePack(): array {
+    return [
+      'pack_essentielle' => 'Pack Essentielle',
+      'pack_croissance' => 'Pack Croissance',
+      'pack_premium' => 'Pack Premium',
+      'pack_e_commerce' => 'Pack E-commerce',
+      'pack_start_up' => 'Pack Start-up',
+      'options_carte' => 'Options à la carte'
+    ];
+  }
 }
+

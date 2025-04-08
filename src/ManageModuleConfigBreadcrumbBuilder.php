@@ -13,22 +13,22 @@ use Drupal\node\NodeInterface;
  * Provides a breadcrumb builder for articles.
  */
 class ManageModuleConfigBreadcrumbBuilder implements BreadcrumbBuilderInterface {
-
+  
   use StringTranslationTrait;
-
+  
   /**
    *
    * {@inheritdoc}
    */
   public function applies(RouteMatchInterface $route_match) {
     /**
-     * Il faudra trouver un moyen pour mieux charger menu et gateway qu'il y ait 
+     * Il faudra trouver un moyen pour mieux charger menu et gateway qu'il y ait
      * ou pas le module 'lesroidelareno'
      */
     $routes = [
       "manage_module_config.manage_entities",
       "generate_style_theme.managecustom.styles",
-      "entity.config_theme_entity.edit_form",
+      "entity.config_theme_entity.edit_form"
     ];
     if (\Drupal::moduleHandler()->moduleExists('lesroidelareno')) {
       $routes = array_merge($routes, [
@@ -37,13 +37,13 @@ class ManageModuleConfigBreadcrumbBuilder implements BreadcrumbBuilderInterface 
       ]);
     }
     $routeName = $route_match->getRouteName();
-    // dump($routeName);
+    //
     if (in_array($routeName, $routes) || str_contains($routeName, 'bookingsystem')) {
       return true;
     }
     return false;
   }
-
+  
   /**
    *
    * {@inheritdoc}
